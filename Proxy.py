@@ -1,5 +1,6 @@
 import socket
 import sys
+import threading
 
 
 def proxy():
@@ -9,9 +10,9 @@ def proxy():
     print("socket created")
 
     try:
-        server.bind((host,port))
+        server.bind((host, port))
     except socket.error as msg:
-        print ('Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
+        print('Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
         sys.exit()
     print("server bind complete")
 
@@ -19,9 +20,15 @@ def proxy():
     print("server is now listening")
 
     while 1:
-        conn, addr=server.accept()
+        conn, addr = server.accept()
         print('Connected with ' + addr[0] + ':' + str(addr[1]))
+        handlerThread = threading.Thread(target=clientHandler, args=(conn,))
+        handlerThread.start()
 
 
-if __name__=="__main__":
+def clientHandler(client):
+    print(client)
+
+
+if __name__ == "__main__":
     proxy()

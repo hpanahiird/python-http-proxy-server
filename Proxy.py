@@ -27,7 +27,14 @@ def proxy():
 
 
 def clientHandler(client):
-    print(client)
+    buffer_size = 500
+    buffer = client.recv(buffer_size)
+    client_request = buffer
+    while len(buffer) == buffer_size:
+        buffer = client.recv(buffer_size)
+        client_request += buffer
+
+    print(client_request)
 
 
 if __name__ == "__main__":

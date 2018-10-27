@@ -35,8 +35,14 @@ def clientHandler(client):
         client_request += buffer
     tmp = client_request[client_request.find(b'Host'):]
     tmp = tmp[len('host: '):tmp.find(b'\n')]
-    host = tmp
+    host = tmp[:-1].decode("utf-8")
     print(host)
+
+    server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+    server.connect((host,80))
+    print(server)
+
+
     print(client_request)
 
 

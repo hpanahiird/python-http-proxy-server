@@ -27,7 +27,7 @@ def proxy():
 
 
 def clientHandler(client):
-    buffer_size = 512
+    buffer_size = 128
     buffer = client.recv(buffer_size)
     client_request = buffer
     while len(buffer) == buffer_size:
@@ -38,8 +38,8 @@ def clientHandler(client):
     host = tmp[:-1].decode("utf-8")
     print(host)
 
-    server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-    server.connect((host,80))
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.connect((host, 80))
     # print(server)
 
     print(client_request)
@@ -48,16 +48,24 @@ def clientHandler(client):
 
     buffer = server.recv(buffer_size)
     client_response = buffer
+    print(len(buffer))
+    # read header
     while len(buffer) == buffer_size:
         buffer = server.recv(buffer_size)
         client_response += buffer
+        print(len(buffer))
+    # read body
+    buffer = server.recv(buffer_size)
+    client_response += buffer
+    while len(buffer) == buffer_size:
+        buffer = server.recv(buffer_size)
+        client_response += buffer
+        print(len(buffer))
     # print(server.recv(100))
     print(client_response)
     client.send(client_response)
     server.close()
     client.close()
-
-
 
 
 if __name__ == "__main__":

@@ -40,10 +40,24 @@ def clientHandler(client):
 
     server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     server.connect((host,80))
-    print(server)
-
+    # print(server)
 
     print(client_request)
+    server.send(client_request)
+    # print(server.recv(500))
+
+    buffer = server.recv(buffer_size)
+    client_response = buffer
+    while len(buffer) == buffer_size:
+        buffer = server.recv(buffer_size)
+        client_response += buffer
+    # print(server.recv(100))
+    print(client_response)
+    client.send(client_response)
+    server.close()
+    client.close()
+
+
 
 
 if __name__ == "__main__":

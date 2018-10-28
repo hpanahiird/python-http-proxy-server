@@ -6,27 +6,27 @@ import threading
 def proxy():
     host = '127.0.0.1'
     port = 5000
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    proxy_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     print("socket created")
 
     try:
-        server.bind((host, port))
+        proxy_server.bind((host, port))
     except socket.error as msg:
         print('Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
         sys.exit()
     print("server bind complete")
 
-    server.listen(10)
+    proxy_server.listen(10)
     print("server is now listening")
 
     while 1:
-        conn, addr = server.accept()
+        conn, addr = proxy_server.accept()
         print('Connected with ' + addr[0] + ':' + str(addr[1]))
-        handlerThread = threading.Thread(target=clientHandler, args=(conn,))
-        handlerThread.start()
+        handler_thread = threading.Thread(target=client_handler, args=(conn,))
+        handler_thread.start()
 
 
-def clientHandler(client):
+def client_handler(client):
     buffer_size = 128
     buffer = client.recv(buffer_size)
     client_request = buffer
@@ -40,7 +40,7 @@ def clientHandler(client):
     print(client_request)
     path = client_request.split()[1]
     print(path)
-    params=path[path.find(b'?')+1:]
+    params = path[path.find(b'?') + 1:]
     print(params)
     print(params.split(b'&'))
     print(host)

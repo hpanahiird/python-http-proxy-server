@@ -29,7 +29,13 @@ def clientHandler(client):
     # host = tmp[:-1].decode("utf-8")
 
     print(client_request)
-
+    method = client_request[:client_request.find(b' ')]
+    if method != b'POST':
+        client.send(
+            b'HTTP/1.0 405 Method Not Allowed\r\nServer: nginx/1.14.0 (Ubuntu)\r\nDate: Sun, 28 Oct 2018 14:08:03 GMT\r\nContent-Type: text/html\r\nContent-Length: 182\r\nConnection: close\r\n\r\n<html>\r\n<head><title>405 Not Allowed</title></head>\r\n<body bgcolor="white">\r\n<center><h1>405 Not Allowed</h1></center>\r\n<hr><center>nginx/1.14.0 (Ubuntu)</center>\r\n</body>\r\n</html>\r\n')
+        client.close()
+    else:
+        print("allowed")
     # path = client_request.split()[1]
     # print(path)
     # params = path[path.find(b'?') + 1:]

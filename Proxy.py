@@ -36,13 +36,19 @@ def clientHandler(client):
     tmp = client_request[client_request.find(b'Host'):]
     tmp = tmp[len('host: '):tmp.find(b'\n')]
     host = tmp[:-1].decode("utf-8")
+
+    print(client_request)
+    path = client_request.split()[1]
+    print(path)
+    params=path[path.find(b'?')+1:]
+    print(params)
+    print(params.split(b'&'))
     print(host)
 
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.connect((host, 80))
     # print(server)
 
-    print(client_request)
     server.send(client_request)
     # print(server.recv(500))
 
@@ -53,14 +59,16 @@ def clientHandler(client):
     while len(buffer) == buffer_size:
         buffer = server.recv(buffer_size)
         client_response += buffer
-        print(len(buffer))
+        # print(len(buffer))
+
+    print(client_response)
     # read body
     buffer = server.recv(buffer_size)
     client_response += buffer
     while len(buffer) == buffer_size:
         buffer = server.recv(buffer_size)
         client_response += buffer
-        print(len(buffer))
+        # print(len(buffer))
     # print(server.recv(100))
     print(client_response)
     client.send(client_response)

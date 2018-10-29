@@ -47,6 +47,10 @@ def client_handler(client):
         client.close()
         return
 
+    body = client_request[client_request.find(b'\r\n\r\n')+len(b'\r\n\r\n'):]
+    print(body)
+
+
     # path = client_request.split()[1]
     # print(path)
     # params = path[path.find(b'?') + 1:]

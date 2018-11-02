@@ -1,10 +1,9 @@
 import socket
 import sys
 import threading
-from Crypto.PublicKey import RSA
+
 from Crypto.Cipher import PKCS1_OAEP
-import json
-import ast
+from Crypto.PublicKey import RSA
 
 
 def proxy():
@@ -57,33 +56,24 @@ def client_handler(client):
     print(port)
     print(host)
     path = client_request.split()[1]
-    params = path[path.find(b'?') + 1:]
-
+    params = b''
+    if path.find(b'?') > 0:
+        params = path[path.find(b'?') + 1:]
+    print("params")
+    print(params)
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.connect((host, int(port)))
 
-    publickey = RSA.import_key(
+    public_key = RSA.import_key(
         b'-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDo1cbUa/keHACfZkRAJ0A985pK\nmKoYbeWgKhmabyoJ1XetO+B3yvDz4RB/wcDkIUlntOkUdhxIDji0kpI4cVS8zjiP\ngC/ZcJV38r8iAjDc4+VoySWqr8NpR6HdjQM/xGZiHLdbZezSTNek+AiUT5jexULy\nbaC1/647gRescORriwIDAQAB\n-----END PUBLIC KEY-----')
-    encryptor = PKCS1_OAEP.new(publickey)
+    encryption = PKCS1_OAEP.new(public_key)
 
-    # ebuffer = b''
     encrypted = b''
-    lllll = []
     for i in range(0, int(len(params) / 86)):
-        ebuffer = encryptor.encrypt(params[i * 86:(i + 1) * 86])
-        encrypted += ebuffer
-        lllll.append(str(ebuffer)[2:-1])
-    ebuffer = encryptor.encrypt(params[int(len(params) / 86) * 86:])
-    encrypted += ebuffer
-    lllll.append(str(ebuffer)[2:-1])
-    # print(encrypted)
-    # print(lllll.__getitem__(0)+lllll.__getitem__(1))
-    stri = json.dumps(lllll)
-    print(stri)
-
-    print(stri.encode())
-
-    # print(encrypted)
+        e_buffer = encryption.encrypt(params[i * 86:(i + 1) * 86])
+        encrypted += e_buffer + b'\n\n'
+    e_buffer = encryption.encrypt(params[int(len(params) / 86) * 86:])
+    encrypted += e_buffer
 
     req_header = client_request[:client_request.find(b'\r\n\r\n')]
     print("header")

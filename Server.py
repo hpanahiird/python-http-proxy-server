@@ -5,7 +5,7 @@ import threading
 def server():
     secure_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    secure_server.bind(('127.0.0.1', 6000))
+    secure_server.bind(('0.0.0.0', 7000))
 
     secure_server.listen(10)
     print("server is now listening")
@@ -47,9 +47,25 @@ def client_handler(client):
         client.close()
         return
 
-    body = client_request[client_request.find(b'\r\n\r\n')+len(b'\r\n\r\n'):]
+    body = client_request[client_request.find(b'\r\n\r\n') + len(b'\r\n\r\n'):]
     print(body)
+    print("reached here")
+    client.send(b'HTTP/1.0 200 OK\r\n'
+                b'Server: nginx/1.14.0 (Ubuntu)\r\n'
+                b'Date: Sun, 28 Oct 2018 14:08:03 GMT\r\n'
+                b'Content-Type: text/html\r\n'
+                b'Content-Length: 182\r\n'
+                b'Connection: close\r\n\r\n'
+                b'<html>\r\n'
+                b'<head><title>OKKKK</title></head>\r\n'
+                b'<body bgcolor="white">\r\n'
+                b'<center><h1>Allowed</h1></center>\r\n'
+                b'<hr><center>nginx/1.14.0 (Ubuntu)</center>\r\n'
+                b'</body>\r\n'
+                b'</html>\r\n'
+                )
 
+    client.close()
 
     # path = client_request.split()[1]
     # print(path)
